@@ -1,0 +1,69 @@
+version: '3.9'
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: medtrack-sqlserver
+    environment:
+      ACCEPT_EULA: Y
+      SA_PASSWORD: "Admin@123456"
+      MSSQL_PID: Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - sqlserver_data:/var/opt/mssql
+    networks:
+      - medtrack-network
+    healthcheck:
+      test: ["CMD", "/opt/mssql-tools18/bin/sqlcmd", "-S", "localhost", "-U", "sa", "-P", "Admin@123456", "-Q", "SELECT 1"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+
+  api:
+    container_name: medtrack-api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      ConnectionStrings__DefaultConnection: "Server=sqlserver,1433;Database=MedTrack;User Id=sa;Password=Admin@123456;TrustServerCertificate=True;"
+      Jwt__Secret: "your-super-secret-key-change-this-in-production-at-least-32-characters"
+      Jwt__Issuer: "MedTrack"
+      Jwt__Audience: "MedTrackUsers"
+      Jwt__ExpirationMinutes: "60"
+      ASPNETCORE_ENVIRONMENT: "Docker"
+      ASPNETCORE_URLS: "http://+:80"
+    ports:
+      - "5000:80"
+      - "5001:443"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    networks:
+      - medtrack-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80/health/status"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Optional: pgAdmin for SQL Server management (uncomment to use)
+  # adminer:
+  #   container_name: medtrack-adminer
+  #   image: adminer:latest
+  #   ports:
+  #     - "8080:8080"
+  #   depends_on:
+  #     - sqlserver
+  #   networks:
+  #     - medtrack-network
+
+networks:
+  medtrack-network:
+    driver: bridge
+
+volumes:
+  sqlserver_data:
+    driver: local

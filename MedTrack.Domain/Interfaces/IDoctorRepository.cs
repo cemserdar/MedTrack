@@ -8,10 +8,10 @@ namespace MedTrack.Domain.Interfaces
 {
     public interface IDoctorRepository
     {
-        Task<Doctor?> GetByIdAsync(int id);
+        Task<Doctor?> GetByIdAsync(Guid id);
         Task<IEnumerable<Doctor>> GetAllAsync();
         Task AddAsync(Doctor doctor);
         Task UpdateAsync(Doctor doctor);
-        Task DeleteAsync(int id);
+        Task DeleteAsync(Guid id);
     }
 }

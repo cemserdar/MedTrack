@@ -36,15 +36,5 @@ namespace MedTrack.Infrastructure.Persistence.Repositories
                 await _context.SaveChangesAsync();
             }
         }
-
-        public Task<Appointment?> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
-        }
     }
 }

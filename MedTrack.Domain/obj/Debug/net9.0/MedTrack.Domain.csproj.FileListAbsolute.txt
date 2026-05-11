@@ -9,3 +9,15 @@ C:\Users\cemse\OneDrive\Masaüstü\MedTrack\MedTrack.Domain\obj\Debug\net9.0\Med
 C:\Users\cemse\OneDrive\Masaüstü\MedTrack\MedTrack.Domain\obj\Debug\net9.0\refint\MedTrack.Domain.dll
 C:\Users\cemse\OneDrive\Masaüstü\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.pdb
 C:\Users\cemse\OneDrive\Masaüstü\MedTrack\MedTrack.Domain\obj\Debug\net9.0\ref\MedTrack.Domain.dll
+C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\bin\Debug\net9.0\MedTrack.Domain.deps.json
+C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\bin\Debug\net9.0\MedTrack.Domain.dll
+C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\bin\Debug\net9.0\MedTrack.Domain.pdb
+C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.AssemblyInfoInputs.cache
+C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.AssemblyInfo.cs
+C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.csproj.CoreCompileInputs.cache
+C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.sourcelink.json
+C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.dll
+C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\obj\Debug\net9.0\refint\MedTrack.Domain.dll
+C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.pdb
+C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\obj\Debug\net9.0\ref\MedTrack.Domain.dll
