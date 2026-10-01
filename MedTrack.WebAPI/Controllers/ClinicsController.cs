@@ -67,16 +67,18 @@ namespace MedTrack.WebAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [HttpPut("{id:guid}")]
         public async Task<ActionResult<ClinicDto>> Update(Guid id, [FromBody] ClinicUpdateDto dto)
         {
             try
             {
+                if (!ModelState.IsValid) return BadRequest(ModelState);
                 var clinic = await _service.UpdateAsync(id, dto);
                 return Ok(clinic);
             }
             catch (KeyNotFoundException)
             {
-                return NotFound();
+                return NotFound($"Clinic with ID {id} not found");
             }
             catch (Exception ex)
             {
@@ -85,13 +87,21 @@ namespace MedTrack.WebAPI.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {
             try
             {
+                var existing = await _service.GetByIdAsync(id);
+                if (existing == null)
+                    return NotFound($"Clinic with ID {id} not found");
+
                 await _service.DeleteAsync(id);
                 return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Clinic with ID {id} not found");
             }
             catch (Exception ex)
             {

@@ -30,8 +30,8 @@ namespace MedTrack.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting insurance types");
-                return StatusCode(500, "An error occurred");
+                _logger.LogError(ex, "Sigorta türleri alınırken hata oluştu");
+                return StatusCode(500, "Sigorta türleri alınırken bir hata oluştu");
             }
         }
 
@@ -42,12 +42,12 @@ namespace MedTrack.WebAPI.Controllers
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
                 var type = await _service.CreateInsuranceTypeAsync(dto);
-                return CreatedAtAction(nameof(GetInsuranceTypes), type);
+                return StatusCode(StatusCodes.Status201Created, type);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating insurance type");
-                return StatusCode(500, "An error occurred");
+                _logger.LogError(ex, "Sigorta türü oluşturulurken hata oluştu");
+                return StatusCode(500, "Sigorta türü oluşturulurken bir hata oluştu");
             }
         }
 
@@ -62,8 +62,8 @@ namespace MedTrack.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting lab test types");
-                return StatusCode(500, "An error occurred");
+                _logger.LogError(ex, "Laboratuvar test türleri alınırken hata oluştu");
+                return StatusCode(500, "Test türleri alınırken bir hata oluştu");
             }
         }
 
@@ -74,12 +74,12 @@ namespace MedTrack.WebAPI.Controllers
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
                 var type = await _service.CreateLabTestTypeAsync(dto);
-                return CreatedAtAction(nameof(GetLabTestTypes), type);
+                return StatusCode(StatusCodes.Status201Created, type);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating lab test type");
-                return StatusCode(500, "An error occurred");
+                _logger.LogError(ex, "Laboratuvar test türü oluşturulurken hata oluştu");
+                return StatusCode(500, "Test türü oluşturulurken bir hata oluştu");
             }
         }
 
@@ -94,8 +94,8 @@ namespace MedTrack.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting imaging types");
-                return StatusCode(500, "An error occurred");
+                _logger.LogError(ex, "Görüntüleme türleri alınırken hata oluştu");
+                return StatusCode(500, "Görüntüleme türleri alınırken bir hata oluştu");
             }
         }
 
@@ -106,12 +106,12 @@ namespace MedTrack.WebAPI.Controllers
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
                 var type = await _service.CreateImagingTypeAsync(dto);
-                return CreatedAtAction(nameof(GetImagingTypes), type);
+                return StatusCode(StatusCodes.Status201Created, type);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating imaging type");
-                return StatusCode(500, "An error occurred");
+                _logger.LogError(ex, "Görüntüleme türü oluşturulurken hata oluştu");
+                return StatusCode(500, "Görüntüleme türü oluşturulurken bir hata oluştu");
             }
         }
 
@@ -126,8 +126,8 @@ namespace MedTrack.WebAPI.Controllers
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error getting diagnosis codes");
-                return StatusCode(500, "An error occurred");
+                _logger.LogError(ex, "Tanı kodları alınırken hata oluştu");
+                return StatusCode(500, "Tanı kodları alınırken bir hata oluştu");
             }
         }
 
@@ -138,12 +138,12 @@ namespace MedTrack.WebAPI.Controllers
             {
                 if (!ModelState.IsValid) return BadRequest(ModelState);
                 var code = await _service.CreateDiagnosisCodeAsync(dto);
-                return CreatedAtAction(nameof(GetDiagnosisCodes), code);
+                return StatusCode(StatusCodes.Status201Created, code);
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Error creating diagnosis code");
-                return StatusCode(500, "An error occurred");
+                _logger.LogError(ex, "Tanı kodu oluşturulurken hata oluştu");
+                return StatusCode(500, "Tanı kodu oluşturulurken bir hata oluştu");
             }
         }
     }

@@ -1,303 +1,196 @@
-# MedTrack - Medical Tracking and Appointment Management System
+# 🏥 MedTrack — Medical Tracking & Appointment Management System
 
-A comprehensive .NET 9 healthcare tracking application with real-time updates, JWT authentication, and containerized deployment.
+[![.NET](https://img.shields.io/badge/.NET-9.0-512BD4?style=flat&logo=dotnet)](https://dotnet.microsoft.com/)
+[![C#](https://img.shields.io/badge/C%23-13-239120?style=flat&logo=csharp)](https://docs.microsoft.com/en-us/dotnet/csharp/)
+[![Entity Framework Core](https://img.shields.io/badge/EF%20Core-9.0-512BD4?style=flat)](https://docs.microsoft.com/ef/core/)
+[![SQL Server](https://img.shields.io/badge/SQL%20Server-2022-CC292B?style=flat&logo=microsoftsqlserver)](https://www.microsoft.com/sql-server)
+[![SignalR](https://img.shields.io/badge/SignalR-Real--Time-0078D7?style=flat)](https://dotnet.microsoft.com/apps/aspnet/signalr)
+[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=flat&logo=docker)](https://www.docker.com/)
+[![Swagger](https://img.shields.io/badge/OpenAPI-Swagger-85EA2D?style=flat&logo=swagger)](https://swagger.io/)
 
-## Features
+MedTrack, modern sağlık kuruluşları, hastaneler ve poliklinikler için geliştirilmiş, yüksek performanslı, kurumsal mimari standartlarına uygun bir **Tıbbi Takip ve Randevu Yönetim Sistemi** REST API'sidir.
 
-- **Patient Management**: Create, read, update, and delete patient records
-- **Appointment Scheduling**: Schedule and manage medical appointments
-- **Doctor Management**: Manage doctor profiles and specialties
-- **Medical Records**: Store medical notes, lab tests, imaging results, prescriptions
-- **Real-time Updates**: SignalR integration for live notifications
-- **JWT Authentication**: Secure API endpoints with JWT tokens
-- **API Documentation**: Swagger/OpenAPI documentation
-- **Docker Support**: Easy containerization with Docker and Docker Compose
+---
 
-## Architecture
+## 🌟 Öne Çıkan Özellikler
 
-- **Layered Architecture**: Domain → Infrastructure → Application → WebAPI
-- **Entity Framework Core**: ORM for SQL Server database
-- **AutoMapper**: Object-to-object mapping
-- **CQRS Ready**: Services pattern for business logic
-- **Repository Pattern**: Abstract data access layer
+- **Clean / N-Tier Architecture**: Domain, Application, Infrastructure ve WebAPI katmanları ile tam sorumluluk ayrımı (Separation of Concerns).
+- **Hasta & Doktor Yönetimi**: Kimlik, iletişim, branş, sigorta ve geçmiş kayıtları yönetimi.
+- **Akıllı Randevu Sistemi**: Çakışma önleyici (double-booking prevention) 30 dakikalık aralık kontrolü, durum güncellemeleri ve tarih filtreleme.
+- **Gerçek Zamanlı Bildirimler (SignalR)**: Randevu oluşturulduğunda, güncellendiğinde veya iptal edildiğinde WebSocket üzerinden anlık tetikleme.
+- **Tıbbi Kayıtlar**:
+  - Reçete & Çoklu İlaç Kalemleri
+  - Laboratuvar Testleri & Durum Takibi
+  - Radyoloji / Görüntüleme Sonuçları (MR, BT, Röntgen vb.)
+  - Doktor Tıbbi Notları & Tanı Kodları
+- **Güvenli Kimlik Doğrulama**:
+  - PBKDF2 (100.000 iterasyon + Salt) şifre özetleme
+  - Rol bazlı JWT (Admin, Doctor, Staff, Patient)
+  - SignalR WebSocket query-string token desteği
+- **Container Desteği**: Docker ve Docker Compose ile SQL Server dahil tek komutla ayağa kalkabilen yapı.
+- **Health Checks**: `/health/status`, `/health/live`, `/health/ready` liveness/readiness endpoint'leri.
 
-## Prerequisites
+---
 
-### Local Development
-- .NET 9 SDK
-- SQL Server 2019 or later
-- Visual Studio 2022 or VS Code
+## 🏛 Mimari Yapı
 
-### Docker Deployment
-- Docker Desktop (includes Docker Compose)
-- 4GB RAM minimum
-
-## Quick Start
-
-### Local Development
-
-1. **Clone and Navigate**
-```bash
-git clone <repository-url>
-cd MedTrack
+```
+MedTrack/
+├── MedTrack.Domain/          # Çekirdek Varlıklar (Entities) & Repository Arayüzleri
+│   ├── Entities/             # 17 Veritabanı Varlığı
+│   └── Interfaces/           # 17 Repository Interface'i
+├── MedTrack.Application/     # İş Mantığı, Servisler, DTO'lar, Eşlemeler
+│   ├── DTOs/                 # Veri Transfer Nesneleri (Validation etiketleri ile)
+│   ├── Interfaces/           # Servis Arayüzleri
+│   ├── Mapping/              # AutoMapper Profilleri
+│   └── Services/             # Servis Uygulamaları, JWT Servisi, PBKDF2 Hasher
+├── MedTrack.Infrastructure/  # EF Core, Veritabanı Erişimi, Konfigürasyon
+│   ├── Migrations/           # EF Core Migration Dosyaları
+│   └── Persistence/          # DbContext ve Repository Implementasyonları
+└── MedTrack.WebAPI/          # REST Controller'lar, SignalR Hub, Middleware
+    ├── Controllers/          # 10 REST Controller (50+ Endpoint)
+    ├── Hubs/                 # SignalR MedicalHub (WebSocket)
+    └── Program.cs            # DI Container, Pipeline & CORS Yapılandırması
 ```
 
-2. **Update Connection String**
-Edit `appsettings.json`:
-```json
-"ConnectionStrings": {
-  "DefaultConnection": "Server=YOUR_SERVER;Database=MedTrack;Trusted_Connection=True;TrustServerCertificate=True;"
-}
-```
+---
 
-3. **Apply Database Migration**
-```bash
-dotnet ef database update --project MedTrack.Infrastructure
-```
+## 🚀 Hızlı Başlangıç
 
-4. **Build Solution**
-```bash
-dotnet build
-```
+### Gereksinimler
 
-5. **Run WebAPI**
-```bash
-cd MedTrack.WebAPI
-dotnet run
-```
+- [.NET 9.0 SDK](https://dotnet.microsoft.com/download/dotnet/9.0)
+- [SQL Server](https://www.microsoft.com/sql-server) veya Docker Desktop
 
-6. **Access Swagger UI**
-Navigate to: `https://localhost:5001` or `http://localhost:5000`
+### 1. Yerel Ortamda Çalıştırma
 
-### Docker Deployment
+1. **Repoyu klonlayın:**
+   ```bash
+   git clone https://github.com/kullanici-adi/MedTrack.git
+   cd MedTrack
+   ```
 
-1. **Build Docker Image**
-```bash
-docker build -t medtrack:latest .
-```
+2. **Veritabanı bağlantı dizesini kontrol edin (`appsettings.json`):**
+   ```json
+   "ConnectionStrings": {
+     "DefaultConnection": "Server=localhost;Database=MedTrack;Trusted_Connection=True;TrustServerCertificate=True;"
+   }
+   ```
 
-2. **Run with Docker Compose**
+3. **Veritabanı migration'larını uygulayın:**
+   ```bash
+   dotnet ef database update --project MedTrack.Infrastructure --startup-project MedTrack.WebAPI
+   ```
+
+4. **Projeyi derleyin ve çalıştırın:**
+   ```bash
+   dotnet run --project MedTrack.WebAPI
+   ```
+
+5. **Swagger UI'ı açın:**
+   Tarayıcınızdan `http://localhost:5274` adresine gidin.
+
+---
+
+### 2. Docker ile Çalıştırma
+
+Tüm sistemi (SQL Server + Web API) tek bir komutla ayağa kaldırabilirsiniz:
+
 ```bash
 docker-compose up -d
 ```
 
-3. **Access Services**
-- **API**: http://localhost:5000
-- **Swagger**: http://localhost:5000/swagger
-- **Health Check**: http://localhost:5000/health/status
-- **SQL Server**: localhost:1433
+- **API & Swagger**: `http://localhost:5000`
+- **Health Check**: `http://localhost:5000/health/status`
+- **SQL Server Portu**: `localhost:1433`
 
-4. **Stop Services**
+Kapatmak için:
 ```bash
 docker-compose down
 ```
 
-5. **View Logs**
-```bash
-docker-compose logs -f api
-docker-compose logs -f sqlserver
-```
+---
 
-## API Endpoints
+## 🔑 Varsayılan Kullanıcı Girişleri (Seed)
 
-### Authentication
-- `POST /api/auth/login` - Get JWT token
-  ```json
-  {
-    "username": "user",
-    "password": "password123"
-  }
-  ```
-- `POST /api/auth/refresh` - Refresh token (requires valid token)
+Sistem ilk açıldığında otomatik olarak aşağıdaki varsayılan kullanıcılar oluşturulur:
 
-### Patients
-- `GET /api/patients` - List all patients
-- `GET /api/patients/{id}` - Get patient by ID
-- `POST /api/patients` - Create patient
-- `PUT /api/patients/{id}` - Update patient
-- `DELETE /api/patients/{id}` - Delete patient
-- `GET /api/patients/search/{name}` - Search patients by name
+| Kullanıcı Adı | Şifre | Rol |
+|---|---|---|
+| `admin` | `Admin@123456` | Admin |
+| `doctor` | `Doctor@123456` | Doctor |
 
-### Doctors
-- `GET /api/doctors` - List all doctors
-- `GET /api/doctors/{id}` - Get doctor by ID
-- `POST /api/doctors` - Create doctor
-- `PUT /api/doctors/{id}` - Update doctor
-- `DELETE /api/doctors/{id}` - Delete doctor
-- `GET /api/doctors/specialty/{specialty}` - Get doctors by specialty
-- `GET /api/doctors/clinic/{clinicId}` - Get doctors by clinic
+> **JWT Kullanımı**: `/api/auth/login` endpoint'inden token aldıktan sonra Swagger UI'da sağ üstteki **Authorize** butonuna tıklayıp `Bearer <TOKEN>` yazarak tüm korumalı uçları çağırabilirsiniz.
 
-### Appointments
-- `GET /api/appointments` - List all appointments
-- `GET /api/appointments/{id}` - Get appointment by ID
-- `POST /api/appointments` - Create appointment
-- `PUT /api/appointments/{id}` - Update appointment
-- `PATCH /api/appointments/{id}/status` - Update appointment status
-- `DELETE /api/appointments/{id}` - Cancel appointment
-- `GET /api/appointments/patient/{patientId}` - Get patient's appointments
-- `GET /api/appointments/doctor/{doctorId}` - Get doctor's appointments
-- `GET /api/appointments/date-range?start=...&end=...` - Get appointments by date range
+---
 
-### Medical Records
-- **Prescriptions**: `/api/prescriptions` [GET, POST, PUT, DELETE]
-- **Medical Notes**: `/api/medicalnotes` [GET, POST, PUT, DELETE]
-- **Lab Tests**: `/api/labtests` [GET, POST, PUT, DELETE]
-- **Imaging**: `/api/imaging` [GET, POST, PUT, DELETE]
+## 📡 API Endpoint Özeti
 
-### Reference Data
-- `GET /api/referencedata/insurance-types`
-- `GET /api/referencedata/lab-test-types`
-- `GET /api/referencedata/imaging-types`
-- `GET /api/referencedata/diagnosis-codes`
+### 🔐 Kimlik Doğrulama (`/api/auth`)
+- `POST /api/auth/login` — Kullanıcı girişi & JWT üretimi
+- `POST /api/auth/register` — Yeni kullanıcı kaydı (PBKDF2 şifreleme ile)
+- `POST /api/auth/refresh` — Token tazeleme
 
-### Health Checks
-- `GET /health/status` - Overall health
-- `GET /health/live` - Liveness probe
-- `GET /health/ready` - Readiness probe
+### 👤 Hasta Yönetimi (`/api/patients`)
+- `GET /api/patients` — Tüm hastaları listele
+- `GET /api/patients/{id}` — ID ile hasta detayı
+- `GET /api/patients/search/{name}` — İsme göre hasta arama
+- `POST /api/patients` — Yeni hasta kaydı
+- `PUT /api/patients/{id}` — Hasta bilgisi güncelleme
+- `DELETE /api/patients/{id}` — Hasta kaydını silme
 
-## Real-time Updates (SignalR)
+### 🩺 Doktor Yönetimi (`/api/doctors`)
+- `GET /api/doctors` — Tüm doktorları listele
+- `GET /api/doctors/{id}` — ID ile doktor detayı
+- `GET /api/doctors/specialty/{specialty}` — Uzmanlığa göre doktorlar
+- `GET /api/doctors/clinic/{clinicId}` — Kliniğe göre doktorlar
+- `POST /api/doctors` — Yeni doktor ekle
+- `PUT /api/doctors/{id}` — Doktor güncelle
+- `DELETE /api/doctors/{id}` — Doktor kaydını sil
 
-Connect to WebSocket hub at: `/hubs/medical`
+### 📅 Randevular (`/api/appointments`)
+- `GET /api/appointments` — Tüm randevular
+- `GET /api/appointments/{id}` — Randevu detayı
+- `GET /api/appointments/patient/{patientId}` — Hastanın randevuları
+- `GET /api/appointments/doctor/{doctorId}` — Doktorun randevuları
+- `GET /api/appointments/date-range` — Tarih aralığına göre randevular
+- `POST /api/appointments` — Randevu oluştur *(Çakışma kontrolü & SignalR anlık bildirimi)*
+- `PUT /api/appointments/{id}` — Randevu güncelle *(SignalR anlık bildirimi)*
+- `PATCH /api/appointments/{id}/status` — Durum güncelle (Scheduled, Completed, Cancelled)
+- `DELETE /api/appointments/{id}` — Randevu iptal/sil
 
-Events:
-- `AppointmentCreated`
-- `AppointmentUpdated`
-- `AppointmentCancelled`
-- `MedicalNoteAdded`
-- `PrescriptionCreated`
-- `PrescriptionUpdated`
-- `LabTestResultAvailable`
-- `ImagingResultAvailable`
-- `UserConnected`
-- `UserDisconnected`
+### 💊 Tıbbi Kayıtlar
+- **Reçeteler**: `/api/prescriptions` [GET, POST, PUT, DELETE]
+- **Tıbbi Notlar**: `/api/medicalnotes` [GET, POST, PUT, DELETE]
+- **Laboratuvar Testleri**: `/api/labtests` [GET, POST, PUT, DELETE, GET /pending]
+- **Görüntüleme / Radyoloji**: `/api/imaging` [GET, POST, PUT, DELETE, GET /pending]
+- **Klinikler**: `/api/clinics` [GET, POST, PUT, DELETE]
+- **Referans Veriler**: `/api/referencedata` (Sigorta, Test Türleri, Görüntüleme Türleri, ICD-10 Tanı Kodları)
 
-## Configuration
+---
 
-### appsettings.json
-```json
-{
-  "ConnectionStrings": {
-    "DefaultConnection": "..."
-  },
-  "Jwt": {
-    "Secret": "change-to-secure-secret-key",
-    "Issuer": "MedTrack",
-    "Audience": "MedTrackUsers",
-    "ExpirationMinutes": 60
-  },
-  "Logging": {
-    "LogLevel": {
-      "Default": "Information"
-    }
-  }
-}
-```
+## ⚡ SignalR Gerçek Zamanlı Olaylar
 
-## Database Schema
+WebSocket Hub Adresi: `/hubs/medical`
 
-### Entities
-- **Patients**: Patient records with demographics
-- **Doctors**: Doctor profiles with specialties
-- **Appointments**: Scheduling appointments between patients and doctors
-- **Clinics**: Medical facilities
-- **MedicalNotes**: Doctor's clinical notes
-- **Prescriptions**: Medication prescriptions with items
-- **LabTests**: Laboratory test records
-- **ImagingResults**: Medical imaging examination results
-- **Allergies**: Patient allergies
-- **ChronicConditions**: Chronic health conditions
-- **Users**: System users (future auth expansion)
-- **Reference Data**: Insurance types, diagnosis codes, lab/imaging types
+İstemciler aşağıdaki olayları dinleyebilir:
+- `AppointmentCreated`: Yeni bir randevu alındığında tetiklenir
+- `AppointmentUpdated`: Randevu güncellendiğinde tetiklenir
+- `AppointmentStatusUpdated`: Randevu durumu değiştiğinde tetiklenir
+- `AppointmentCancelled`: Randevu iptal edildiğinde tetiklenir
+- `UserConnected` / `UserDisconnected`: Kullanıcı varlık bildirimleri
 
-## Development Workflow
+---
 
-### Adding New Features
+## 🛡 Güvenlik ve Mimari Prensipler
 
-1. **Define Entity** in `MedTrack.Domain/Entities/`
-2. **Create Repository Interface** in `MedTrack.Domain/Interfaces/`
-3. **Implement Repository** in `MedTrack.Infrastructure/Persistence/Repositories/`
-4. **Create DTO** in `MedTrack.Application/DTOs/`
-5. **Add AutoMapper Mapping** in `MedTrack.Application/Mapping/MappingProfile.cs`
-6. **Create Service Interface** in `MedTrack.Application/Interfaces/`
-7. **Implement Service** in `MedTrack.Application/Services/`
-8. **Create Controller** in `MedTrack.WebAPI/Controllers/`
-9. **Register DI** in `MedTrack.WebAPI/Program.cs`
-10. **Create Migration**: `dotnet ef migrations add FeatureName`
+- **Şifreleme**: `Rfc2898DeriveBytes.Pbkdf2` algoritmasıyla 100.000 döngü ve rastgele 16 baytlık tuz (salt) ile güvenli parola saklama.
+- **Doğrulama**: Giriş DTO'ları üzerinde `[Required]`, `[MinLength]`, `[EmailAddress]` gibi DataAnnotations ile güçlü model doğrulaması.
+- **İlişkisel Tutarlılık**: EF Core `Restrict` silme kuralları ve doktor-hasta eşleştirmelerinde tekillik kısıtları (`IsUnique`).
+- **CORS Uyumluluğu**: SignalR kimlik doğrulama gereksinimlerine uygun şekilde `SetIsOriginAllowed` + `AllowCredentials` yapılandırması.
 
-### Testing
+---
 
-Run tests (when available):
-```bash
-dotnet test
-```
+## 📄 Lisans
 
-## Docker Troubleshooting
-
-### SQL Server connection issues
-```bash
-# Check SQL Server logs
-docker-compose logs sqlserver
-
-# Test connection from API container
-docker exec medtrack-api sqlcmd -S sqlserver,1433 -U sa -P Admin@123456 -Q "SELECT 1"
-```
-
-### API won't start
-```bash
-# View API logs
-docker-compose logs api
-
-# Rebuild without cache
-docker-compose build --no-cache
-
-# Remove volumes and restart
-docker-compose down -v
-docker-compose up -d
-```
-
-### Port conflicts
-If ports 5000, 5001, or 1433 are in use:
-- Edit `docker-compose.yml` to use different ports
-- Or kill existing processes using those ports
-
-## Security Considerations
-
-1. **JWT Secret**: Change the JWT secret in production
-2. **Database Password**: Change SQL Server password in `docker-compose.yml`
-3. **HTTPS**: Enable HTTPS in production
-4. **CORS**: Configure CORS policies for your frontend domain
-5. **Rate Limiting**: Implement rate limiting for API endpoints
-6. **Input Validation**: All endpoints validate input data
-
-## Performance Optimization
-
-- **Connection Pooling**: Configured in EF Core
-- **Async/Await**: All database operations are async
-- **Lazy Loading**: Disabled, use explicit includes
-- **Query Optimization**: Use LINQ projections
-- **Caching**: Can be added at service layer
-
-## Future Enhancements
-
-- [ ] Advanced audit logging
-- [ ] File upload for medical documents
-- [ ] SMS/Email notifications
-- [ ] Mobile app (Xamarin/Flutter)
-- [ ] Advanced reporting
-- [ ] HIPAA compliance
-- [ ] Two-factor authentication
-- [ ] Role-based access control (RBAC)
-- [ ] Multi-tenant support
-
-## Support & Contributing
-
-For issues and feature requests, please open an issue on the repository.
-
-## License
-
-This project is licensed under the MIT License - see LICENSE file for details.
-
-## Contact
-
-**Project**: MedTrack  
-**Developed**: May 2026
+Bu proje [MIT Lisansı](LICENSE) altında lisanslanmıştır.

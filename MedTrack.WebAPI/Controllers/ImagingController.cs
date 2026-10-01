@@ -111,17 +111,18 @@ namespace MedTrack.WebAPI.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:guid}")]
         public async Task<ActionResult<ImagingResultDto>> Update(Guid id, [FromBody] ImagingResultUpdateDto dto)
         {
             try
             {
+                if (!ModelState.IsValid) return BadRequest(ModelState);
                 var result = await _service.UpdateAsync(id, dto);
                 return Ok(result);
             }
             catch (KeyNotFoundException)
             {
-                return NotFound();
+                return NotFound($"Imaging result with ID {id} not found");
             }
             catch (Exception ex)
             {
@@ -130,13 +131,21 @@ namespace MedTrack.WebAPI.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {
             try
             {
+                var existing = await _service.GetByIdAsync(id);
+                if (existing == null)
+                    return NotFound($"Imaging result with ID {id} not found");
+
                 await _service.DeleteAsync(id);
                 return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Imaging result with ID {id} not found");
             }
             catch (Exception ex)
             {

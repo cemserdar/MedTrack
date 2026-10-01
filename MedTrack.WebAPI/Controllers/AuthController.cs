@@ -1,5 +1,10 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Authorization;
+using System.Security.Claims;
+using MedTrack.Application.DTOs;
 using MedTrack.Application.Services;
+using MedTrack.Domain.Entities;
+using MedTrack.Domain.Interfaces;
 
 namespace MedTrack.WebAPI.Controllers
 {
@@ -7,100 +12,160 @@ namespace MedTrack.WebAPI.Controllers
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
+        private readonly IUserRepository _userRepository;
+        private readonly IPasswordHasher _passwordHasher;
         private readonly IJwtTokenService _tokenService;
         private readonly ILogger<AuthController> _logger;
 
-        public AuthController(IJwtTokenService tokenService, ILogger<AuthController> logger)
+        public AuthController(
+            IUserRepository userRepository,
+            IPasswordHasher passwordHasher,
+            IJwtTokenService tokenService,
+            ILogger<AuthController> logger)
         {
+            _userRepository = userRepository;
+            _passwordHasher = passwordHasher;
             _tokenService = tokenService;
             _logger = logger;
         }
 
         /// <summary>
-        /// Login and get JWT token
+        /// Kullanıcı girişi ve JWT token üretimi
         /// </summary>
-        /// <param name="loginRequest">Username and password</param>
-        /// <returns>JWT token</returns>
         [HttpPost("login")]
-        public IActionResult Login([FromBody] LoginRequest loginRequest)
+        public async Task<IActionResult> Login([FromBody] LoginRequestDto request)
         {
             try
             {
-                if (string.IsNullOrEmpty(loginRequest?.Username) || string.IsNullOrEmpty(loginRequest?.Password))
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var user = await _userRepository.GetByUsernameAsync(request.Username);
+                if (user == null || !user.IsActive)
                 {
-                    return BadRequest(new { message = "Username and password are required" });
+                    _logger.LogWarning("Geçersiz kullanıcı adı denemesi: {Username}", request.Username);
+                    return Unauthorized(new { message = "Kullanıcı adı veya şifre hatalı" });
                 }
 
-                // TODO: Validate credentials against user database
-                // For now, accept any non-empty credentials for demo purposes
-                if (loginRequest.Username.Length < 3 || loginRequest.Password.Length < 6)
+                if (!_passwordHasher.VerifyPassword(request.Password, user.PasswordHash))
                 {
-                    return Unauthorized(new { message = "Invalid credentials" });
+                    _logger.LogWarning("Hatalı şifre denemesi: {Username}", request.Username);
+                    return Unauthorized(new { message = "Kullanıcı adı veya şifre hatalı" });
                 }
 
-                // Generate token (userId = username for demo)
-                var token = _tokenService.GenerateToken(loginRequest.Username, loginRequest.Username, "User");
+                var token = _tokenService.GenerateToken(user.Id.ToString(), user.Username, user.Role);
 
-                _logger.LogInformation($"User {loginRequest.Username} logged in successfully");
+                _logger.LogInformation("Kullanıcı {Username} ({Role}) başarıyla giriş yaptı", user.Username, user.Role);
 
-                return Ok(new
+                return Ok(new AuthResponseDto
                 {
-                    success = true,
-                    token = token,
-                    expiresIn = "60 minutes",
-                    tokenType = "Bearer"
+                    Success = true,
+                    Token = token,
+                    Username = user.Username,
+                    Role = user.Role,
+                    ExpiresIn = "60 minutes",
+                    TokenType = "Bearer"
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Login error: {ex.Message}");
-                return StatusCode(500, new { message = "An error occurred during login" });
+                _logger.LogError(ex, "Giriş işlemi sırasında hata oluştu: {Username}", request.Username);
+                return StatusCode(500, new { message = "Giriş yapılırken sunucu hatası oluştu" });
             }
         }
 
         /// <summary>
-        /// Refresh JWT token
+        /// Yeni kullanıcı kaydı (Doktor, Personel veya Hasta)
         /// </summary>
-        /// <returns>New JWT token</returns>
+        [HttpPost("register")]
+        public async Task<IActionResult> Register([FromBody] RegisterRequestDto request)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                    return BadRequest(ModelState);
+
+                var existingUser = await _userRepository.GetByUsernameAsync(request.Username);
+                if (existingUser != null)
+                {
+                    return BadRequest(new { message = "Bu kullanıcı adı zaten kullanılmaktadır." });
+                }
+
+                var user = new User
+                {
+                    Id = Guid.NewGuid(),
+                    Username = request.Username,
+                    Email = request.Email,
+                    PasswordHash = _passwordHasher.HashPassword(request.Password),
+                    Role = string.IsNullOrWhiteSpace(request.Role) ? "Doctor" : request.Role,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow,
+                    UpdatedAt = DateTime.UtcNow
+                };
+
+                await _userRepository.AddAsync(user);
+
+                var token = _tokenService.GenerateToken(user.Id.ToString(), user.Username, user.Role);
+
+                _logger.LogInformation("Yeni kullanıcı kaydedildi: {Username} ({Role})", user.Username, user.Role);
+
+                return StatusCode(201, new AuthResponseDto
+                {
+                    Success = true,
+                    Token = token,
+                    Username = user.Username,
+                    Role = user.Role,
+                    ExpiresIn = "60 minutes",
+                    TokenType = "Bearer"
+                });
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Kayıt işlemi sırasında hata oluştu: {Username}", request.Username);
+                return StatusCode(500, new { message = "Kayıt işlemi sırasında sunucu hatası oluştu" });
+            }
+        }
+
+        /// <summary>
+        /// Mevcut JWT token ile oturum yenileme
+        /// </summary>
+        [Authorize]
         [HttpPost("refresh")]
         public IActionResult RefreshToken()
         {
             try
             {
-                var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier);
-                var userNameClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Name);
-                var roleClaim = User.FindFirst(System.Security.Claims.ClaimTypes.Role);
+                var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier);
+                var userNameClaim = User.FindFirst(ClaimTypes.Name);
+                var roleClaim = User.FindFirst(ClaimTypes.Role);
 
                 if (userIdClaim == null || userNameClaim == null)
                 {
-                    return Unauthorized(new { message = "Invalid token" });
+                    return Unauthorized(new { message = "Geçersiz veya süresi dolmuş token" });
                 }
 
+                var role = roleClaim?.Value ?? "User";
                 var token = _tokenService.GenerateToken(
                     userIdClaim.Value,
                     userNameClaim.Value,
-                    roleClaim?.Value ?? "User"
+                    role
                 );
 
-                return Ok(new
+                return Ok(new AuthResponseDto
                 {
-                    success = true,
-                    token = token,
-                    expiresIn = "60 minutes",
-                    tokenType = "Bearer"
+                    Success = true,
+                    Token = token,
+                    Username = userNameClaim.Value,
+                    Role = role,
+                    ExpiresIn = "60 minutes",
+                    TokenType = "Bearer"
                 });
             }
             catch (Exception ex)
             {
-                _logger.LogError($"Token refresh error: {ex.Message}");
-                return StatusCode(500, new { message = "An error occurred during token refresh" });
+                _logger.LogError(ex, "Token yenileme hatası");
+                return StatusCode(500, new { message = "Token yenilenirken sunucu hatası oluştu" });
             }
         }
-    }
-
-    public class LoginRequest
-    {
-        public string? Username { get; set; }
-        public string? Password { get; set; }
     }
 }

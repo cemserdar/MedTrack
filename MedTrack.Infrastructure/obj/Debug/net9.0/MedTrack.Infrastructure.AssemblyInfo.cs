@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MedTrack.Infrastructure")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+4b53c35ae591dbde27aea473d8909074260959d9")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fce56d9b045c5e2657f1db82679a4457034241a2")]
 [assembly: System.Reflection.AssemblyProductAttribute("MedTrack.Infrastructure")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MedTrack.Infrastructure")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

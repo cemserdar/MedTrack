@@ -124,13 +124,21 @@ namespace MedTrack.WebAPI.Controllers
         /// <summary>
         /// Delete patient
         /// </summary>
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {
             try
             {
+                var existing = await _service.GetByIdAsync(id);
+                if (existing == null)
+                    return NotFound($"Patient with ID {id} not found");
+
                 await _service.DeleteAsync(id);
                 return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Patient with ID {id} not found");
             }
             catch (Exception ex)
             {

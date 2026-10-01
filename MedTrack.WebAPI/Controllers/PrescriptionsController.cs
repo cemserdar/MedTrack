@@ -96,17 +96,18 @@ namespace MedTrack.WebAPI.Controllers
             }
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{id:guid}")]
         public async Task<ActionResult<PrescriptionDto>> Update(Guid id, [FromBody] PrescriptionUpdateDto dto)
         {
             try
             {
+                if (!ModelState.IsValid) return BadRequest(ModelState);
                 var prescription = await _service.UpdateAsync(id, dto);
                 return Ok(prescription);
             }
             catch (KeyNotFoundException)
             {
-                return NotFound();
+                return NotFound($"Prescription with ID {id} not found");
             }
             catch (Exception ex)
             {
@@ -115,13 +116,21 @@ namespace MedTrack.WebAPI.Controllers
             }
         }
 
-        [HttpDelete("{id}")]
+        [HttpDelete("{id:guid}")]
         public async Task<ActionResult> Delete(Guid id)
         {
             try
             {
+                var existing = await _service.GetByIdAsync(id);
+                if (existing == null)
+                    return NotFound($"Prescription with ID {id} not found");
+
                 await _service.DeleteAsync(id);
                 return NoContent();
+            }
+            catch (KeyNotFoundException)
+            {
+                return NotFound($"Prescription with ID {id} not found");
             }
             catch (Exception ex)
             {

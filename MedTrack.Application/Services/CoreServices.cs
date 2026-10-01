@@ -179,6 +179,14 @@ namespace MedTrack.Application.Services
             if (dto.AppointmentDate < DateTime.UtcNow)
                 throw new ArgumentException("Appointment date must be in the future");
 
+            // Randevu çakışma kontrolü: Aynı doktora 30 dakika içinde başka aktif randevu verilmesini engelle
+            var existingDoctorAppointments = (await _repository.GetAllAsync())
+                .Where(a => a.DoctorId == dto.DoctorId && a.Status != "Cancelled");
+            if (existingDoctorAppointments.Any(a => Math.Abs((a.AppointmentDate - dto.AppointmentDate).TotalMinutes) < 30))
+            {
+                throw new ArgumentException("Doktorun belirtilen tarih ve saat diliminde (30 dk) zaten başka bir randevusu bulunmaktadır.");
+            }
+
             var appointment = _mapper.Map<Appointment>(dto);
             appointment.Id = Guid.NewGuid();
             appointment.Status = "Scheduled";

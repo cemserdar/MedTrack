@@ -35,20 +35,26 @@ namespace MedTrack.Infrastructure.Persistence
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Composite Key: DoctorPatientRelation
+            // Primary Key: DoctorPatientRelation uses its own Guid Id
             modelBuilder.Entity<DoctorPatientRelation>()
-                .HasKey(dpr => new { dpr.DoctorId, dpr.PatientId });
+                .HasKey(dpr => dpr.Id);
+
+            // Prevent duplicate active relations between the same doctor and patient
+            modelBuilder.Entity<DoctorPatientRelation>()
+                .HasIndex(dpr => new { dpr.DoctorId, dpr.PatientId })
+                .IsUnique();
 
             modelBuilder.Entity<DoctorPatientRelation>()
                 .HasOne(dpr => dpr.Doctor)
                 .WithMany(d => d.DoctorPatientRelations)
-                .HasForeignKey(dpr => dpr.DoctorId);
+                .HasForeignKey(dpr => dpr.DoctorId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<DoctorPatientRelation>()
                 .HasOne(dpr => dpr.Patient)
                 .WithMany(p => p.DoctorPatientRelations)
-                .HasForeignKey(dpr => dpr.PatientId);
-
+                .HasForeignKey(dpr => dpr.PatientId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 

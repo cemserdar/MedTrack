@@ -1,23 +1,23 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Infrastructure\\MedTrack.Infrastructure.csproj": {}
+    "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Infrastructure\\MedTrack.Infrastructure.csproj": {}
   },
   "projects": {
-    "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Application\\MedTrack.Application.csproj": {
+    "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Application\\MedTrack.Application.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Application\\MedTrack.Application.csproj",
+        "projectUniqueName": "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Application\\MedTrack.Application.csproj",
         "projectName": "MedTrack.Application",
-        "projectPath": "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Application\\MedTrack.Application.csproj",
-        "packagesPath": "C:\\Users\\cemse\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Application\\obj\\",
+        "projectPath": "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Application\\MedTrack.Application.csproj",
+        "packagesPath": "C:\\Users\\Cem Serdar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Application\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\cemse\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Cem Serdar\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -26,15 +26,15 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
+            "framework": "net9.0",
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Domain\\MedTrack.Domain.csproj": {
-                "projectPath": "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Domain\\MedTrack.Domain.csproj"
+              "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Domain\\MedTrack.Domain.csproj": {
+                "projectPath": "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Domain\\MedTrack.Domain.csproj"
               }
             }
           }
@@ -49,10 +49,11 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net9.0": {
+          "framework": "net9.0",
           "targetAlias": "net9.0",
           "dependencies": {
             "AutoMapper": {
@@ -84,24 +85,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Domain\\MedTrack.Domain.csproj": {
+    "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Domain\\MedTrack.Domain.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Domain\\MedTrack.Domain.csproj",
+        "projectUniqueName": "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Domain\\MedTrack.Domain.csproj",
         "projectName": "MedTrack.Domain",
-        "projectPath": "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Domain\\MedTrack.Domain.csproj",
-        "packagesPath": "C:\\Users\\cemse\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Domain\\obj\\",
+        "projectPath": "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Domain\\MedTrack.Domain.csproj",
+        "packagesPath": "C:\\Users\\Cem Serdar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Domain\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\cemse\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Cem Serdar\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -110,11 +111,11 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
+            "framework": "net9.0",
             "targetAlias": "net9.0",
             "projectReferences": {}
           }
@@ -129,10 +130,11 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net9.0": {
+          "framework": "net9.0",
           "targetAlias": "net9.0",
           "imports": [
             "net461",
@@ -150,24 +152,24 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     },
-    "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Infrastructure\\MedTrack.Infrastructure.csproj": {
+    "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Infrastructure\\MedTrack.Infrastructure.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Infrastructure\\MedTrack.Infrastructure.csproj",
+        "projectUniqueName": "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Infrastructure\\MedTrack.Infrastructure.csproj",
         "projectName": "MedTrack.Infrastructure",
-        "projectPath": "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Infrastructure\\MedTrack.Infrastructure.csproj",
-        "packagesPath": "C:\\Users\\cemse\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Infrastructure\\obj\\",
+        "projectPath": "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Infrastructure\\MedTrack.Infrastructure.csproj",
+        "packagesPath": "C:\\Users\\Cem Serdar\\.nuget\\packages\\",
+        "outputPath": "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Infrastructure\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
         ],
         "configFilePaths": [
-          "C:\\Users\\cemse\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\Cem Serdar\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
@@ -176,18 +178,18 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
           "net9.0": {
+            "framework": "net9.0",
             "targetAlias": "net9.0",
             "projectReferences": {
-              "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Application\\MedTrack.Application.csproj": {
-                "projectPath": "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Application\\MedTrack.Application.csproj"
+              "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Application\\MedTrack.Application.csproj": {
+                "projectPath": "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Application\\MedTrack.Application.csproj"
               },
-              "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Domain\\MedTrack.Domain.csproj": {
-                "projectPath": "C:\\Users\\cemse\\OneDrive\\Masaüstü\\Project\\MedTrack\\MedTrack.Domain\\MedTrack.Domain.csproj"
+              "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Domain\\MedTrack.Domain.csproj": {
+                "projectPath": "C:\\Users\\Cem Serdar\\Desktop\\Proje\\MedTrack\\MedTrack.Domain\\MedTrack.Domain.csproj"
               }
             }
           }
@@ -202,10 +204,11 @@
           "auditLevel": "low",
           "auditMode": "direct"
         },
-        "SdkAnalysisLevel": "10.0.200"
+        "SdkAnalysisLevel": "10.0.300"
       },
       "frameworks": {
         "net9.0": {
+          "framework": "net9.0",
           "targetAlias": "net9.0",
           "dependencies": {
             "Microsoft.EntityFrameworkCore": {
@@ -257,7 +260,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.203/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\10.0.302/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

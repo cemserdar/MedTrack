@@ -1,69 +1,55 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 
 namespace MedTrack.WebAPI.Hubs
 {
+    [Authorize]
     public class MedicalHub : Hub
     {
         public override async Task OnConnectedAsync()
         {
-            await Clients.All.SendAsync("UserConnected", Context.ConnectionId);
+            var username = Context.User?.Identity?.Name ?? Context.ConnectionId;
+            await Clients.Others.SendAsync("UserConnected", username);
             await base.OnConnectedAsync();
         }
 
         public override async Task OnDisconnectedAsync(Exception? exception)
         {
-            await Clients.All.SendAsync("UserDisconnected", Context.ConnectionId);
+            var username = Context.User?.Identity?.Name ?? Context.ConnectionId;
+            await Clients.Others.SendAsync("UserDisconnected", username);
             await base.OnDisconnectedAsync(exception);
         }
 
-        public async Task SendNotification(string message)
+        /// <summary>
+        /// Doktor grubuna katılım (Sadece o doktora ait bildirimleri dinlemek için)
+        /// </summary>
+        public async Task JoinDoctorGroup(string doctorId)
         {
-            await Clients.All.SendAsync("ReceiveNotification", message);
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"Doctor_{doctorId}");
         }
 
-        // Appointment notifications
-        public async Task BroadcastAppointmentCreated(object appointmentData)
+        /// <summary>
+        /// Doktor grubundan ayrılma
+        /// </summary>
+        public async Task LeaveDoctorGroup(string doctorId)
         {
-            await Clients.All.SendAsync("AppointmentCreated", appointmentData);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"Doctor_{doctorId}");
         }
 
-        public async Task BroadcastAppointmentUpdated(object appointmentData)
+        /// <summary>
+        /// Hasta grubuna katılım
+        /// </summary>
+        public async Task JoinPatientGroup(string patientId)
         {
-            await Clients.All.SendAsync("AppointmentUpdated", appointmentData);
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"Patient_{patientId}");
         }
 
-        public async Task BroadcastAppointmentCancelled(string appointmentId)
+        /// <summary>
+        /// Hasta grubundan ayrılma
+        /// </summary>
+        public async Task LeavePatientGroup(string patientId)
         {
-            await Clients.All.SendAsync("AppointmentCancelled", appointmentId);
-        }
-
-        // Medical note notifications
-        public async Task BroadcastMedicalNoteAdded(object noteData)
-        {
-            await Clients.All.SendAsync("MedicalNoteAdded", noteData);
-        }
-
-        // Prescription notifications
-        public async Task BroadcastPrescriptionCreated(object prescriptionData)
-        {
-            await Clients.All.SendAsync("PrescriptionCreated", prescriptionData);
-        }
-
-        public async Task BroadcastPrescriptionUpdated(object prescriptionData)
-        {
-            await Clients.All.SendAsync("PrescriptionUpdated", prescriptionData);
-        }
-
-        // Lab test notifications
-        public async Task BroadcastLabTestResultAvailable(object testResultData)
-        {
-            await Clients.All.SendAsync("LabTestResultAvailable", testResultData);
-        }
-
-        // Imaging result notifications
-        public async Task BroadcastImagingResultAvailable(object imagingResultData)
-        {
-            await Clients.All.SendAsync("ImagingResultAvailable", imagingResultData);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"Patient_{patientId}");
         }
     }
 }

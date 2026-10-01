@@ -21,3 +21,15 @@ C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\obj\Debug\ne
 C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\obj\Debug\net9.0\refint\MedTrack.Domain.dll
 C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.pdb
 C:\Users\cemse\OneDrive\Masaüstü\Project\MedTrack\MedTrack.Domain\obj\Debug\net9.0\ref\MedTrack.Domain.dll
+C:\Users\Cem Serdar\Desktop\Proje\MedTrack\MedTrack.Domain\bin\Debug\net9.0\MedTrack.Domain.deps.json
+C:\Users\Cem Serdar\Desktop\Proje\MedTrack\MedTrack.Domain\bin\Debug\net9.0\MedTrack.Domain.dll
+C:\Users\Cem Serdar\Desktop\Proje\MedTrack\MedTrack.Domain\bin\Debug\net9.0\MedTrack.Domain.pdb
+C:\Users\Cem Serdar\Desktop\Proje\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.GeneratedMSBuildEditorConfig.editorconfig
+C:\Users\Cem Serdar\Desktop\Proje\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.AssemblyInfoInputs.cache
+C:\Users\Cem Serdar\Desktop\Proje\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.AssemblyInfo.cs
+C:\Users\Cem Serdar\Desktop\Proje\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.csproj.CoreCompileInputs.cache
+C:\Users\Cem Serdar\Desktop\Proje\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.sourcelink.json
+C:\Users\Cem Serdar\Desktop\Proje\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.dll
+C:\Users\Cem Serdar\Desktop\Proje\MedTrack\MedTrack.Domain\obj\Debug\net9.0\refint\MedTrack.Domain.dll
+C:\Users\Cem Serdar\Desktop\Proje\MedTrack\MedTrack.Domain\obj\Debug\net9.0\MedTrack.Domain.pdb
+C:\Users\Cem Serdar\Desktop\Proje\MedTrack\MedTrack.Domain\obj\Debug\net9.0\ref\MedTrack.Domain.dll
