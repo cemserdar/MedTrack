@@ -97,12 +97,22 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddAuthorization();
 
 // Add Entity Framework Core
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? "Data Source=medtrack.db;";
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
-    options.UseSqlServer(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        b => b.MigrationsAssembly("MedTrack.Infrastructure")
-    )
-);
+{
+    if (connectionString.Contains(".db", StringComparison.OrdinalIgnoreCase) ||
+        (connectionString.Contains("Data Source=", StringComparison.OrdinalIgnoreCase) && !connectionString.Contains("Server=")))
+    {
+        options.UseSqlite(connectionString);
+    }
+    else
+    {
+        options.UseSqlServer(
+            connectionString,
+            b => b.MigrationsAssembly("MedTrack.Infrastructure")
+        );
+    }
+});
 
 // Register all repositories
 builder.Services.AddScoped<IPatientRepository, PatientRepository>();
@@ -170,7 +180,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI(options =>
     {
         options.SwaggerEndpoint("/swagger/v1/swagger.json", "MedTrack API v1");
-        options.RoutePrefix = string.Empty; // Swagger at root
+        options.RoutePrefix = "swagger"; // Swagger at /swagger
     });
 }
 
@@ -180,6 +190,9 @@ app.MapHealthChecks("/health/live");
 app.MapHealthChecks("/health/ready");
 
 app.UseHttpsRedirection();
+app.UseDefaultFiles();
+app.UseStaticFiles();
+
 app.UseCors("AllowAll");
 
 // Add authentication and authorization middleware
@@ -191,48 +204,7 @@ app.MapControllers();
 // Map SignalR hub
 app.MapHub<MedTrack.WebAPI.Hubs.MedicalHub>("/hubs/medical");
 
-// Seed initial users if database is empty
-try
-{
-    using var scope = app.Services.CreateScope();
-    var userRepo = scope.ServiceProvider.GetRequiredService<IUserRepository>();
-    var passwordHasher = scope.ServiceProvider.GetRequiredService<IPasswordHasher>();
-
-    var admin = await userRepo.GetByUsernameAsync("admin");
-    if (admin == null)
-    {
-        await userRepo.AddAsync(new User
-        {
-            Id = Guid.NewGuid(),
-            Username = "admin",
-            Email = "admin@medtrack.com",
-            PasswordHash = passwordHasher.HashPassword("Admin@123456"),
-            Role = "Admin",
-            IsActive = true,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        });
-    }
-
-    var doctor = await userRepo.GetByUsernameAsync("doctor");
-    if (doctor == null)
-    {
-        await userRepo.AddAsync(new User
-        {
-            Id = Guid.NewGuid(),
-            Username = "doctor",
-            Email = "doctor@medtrack.com",
-            PasswordHash = passwordHasher.HashPassword("Doctor@123456"),
-            Role = "Doctor",
-            IsActive = true,
-            CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
-        });
-    }
-}
-catch
-{
-    // Ignore seeding failures when DB is not yet migrated/reachable during build
-}
+// Seed database with clinical reference and demo data
+await MedTrack.WebAPI.DataSeeder.SeedAsync(app.Services);
 
 app.Run();

@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html lang="tr" data-theme="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MedTrack — Klinik & Randevu Yönetim Sistemi</title>
+    <meta name="description" content="MedTrack modern hastane ve klinik randevu yönetim sistemi kontrol paneli. Gerçek zamanlı SignalR WebSocket desteği ile entegre.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="./css/style.css">
+    <!-- SignalR Client -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+    <!-- Chart.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+</head>
+<body>
+    <div class="ambient-glow top-right"></div>
+    <div class="ambient-glow bottom-left"></div>
+
+    <div class="app-container">
+        <!-- Sidebar Navigation -->
+        <aside class="app-sidebar" id="sidebarMenu">
+            <div class="brand-wrapper">
+                <div class="brand-icon">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4" />
+                    </svg>
+                </div>
+                <div class="brand-text">
+                    <h1>Med<span>Track</span></h1>
+                    <div class="brand-tagline">Clinical System</div>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section-title">Ana Menü</div>
+                <div class="nav-item active" data-tab="tabOverview" id="navItemOverview">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                    </svg>
+                    <span>Genel Bakış</span>
+                </div>
+
+                <div class="nav-item" data-tab="tabAppointments" id="navItemAppointments">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                    </svg>
+                    <span>Randevu Takvimi</span>
+                </div>
+
+                <div class="nav-item" data-tab="tabPatients" id="navItemPatients">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+                    </svg>
+                    <span>Hasta Yönetimi</span>
+                </div>
+
+                <div class="nav-item" data-tab="tabDoctors" id="navItemDoctors">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/>
+                    </svg>
+                    <span>Doktor & Poliklinik</span>
+                </div>
+
+                <div class="nav-section-title">Entegrasyon & Canlı</div>
+                <div class="nav-item" data-tab="tabStream" id="navItemStream">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z"/>
+                    </svg>
+                    <span>SignalR Canlı Akış</span>
+                    <span class="badge" style="background:#10b981; color:#fff;">Live</span>
+                </div>
+
+                <a href="/swagger" target="_blank" class="nav-item" id="navItemSwagger" style="text-decoration:none;">
+                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"/>
+                    </svg>
+                    <span>Swagger REST API</span>
+                    <span class="badge" style="background:rgba(255,255,255,0.15);">Docs ↗</span>
+                </a>
+            </nav>
+
+            <div class="sidebar-footer">
+                <div class="user-profile-card" id="userProfilePill">
+                    <div class="user-avatar">DR</div>
+                    <div class="user-info">
+                        <div class="user-name" id="currentUserName">Yönetici (Admin)</div>
+                        <div class="user-role" id="currentUserRole">Sistem Yöneticisi</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <main class="app-main">
+            <!-- Top Sticky Header -->
+            <header class="app-header">
+                <div class="header-left">
+                    <button class="mobile-menu-btn" id="mobileMenuToggle" aria-label="Menüyü Aç/Kapat">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="24" height="24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                    </button>
+                    <div class="hospital-badge">
+                        <span class="dot"></span>
+                        <span>MedTrack Merkez Hastanesi</span>
+                    </div>
+                    <div class="header-search">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                        </svg>
+                        <input type="text" id="globalSearchInput" placeholder="Hasta adı, TC Kimlik veya telefon ara..." autocomplete="off">
+                    </div>
+                </div>
+
+                <div class="header-right">
+                    <!-- SignalR Live Status Indicator -->
+                    <div class="signalr-status" id="signalRStatusBadge" title="ASP.NET Core SignalR WebSocket MedicalHub">
+                        <span class="pulse-dot"></span>
+                        <span>Canlı Bağlantı</span>
+                    </div>
+
+                    <!-- Theme Toggle -->
+                    <button class="icon-btn" id="themeToggleBtn" title="Tema Değiştir (Koyu / Açık)">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+                        </svg>
+                    </button>
+
+                    <!-- Quick Add Appointment Button -->
+                    <button class="btn-primary" data-open-modal="appointmentModal" id="headerNewAppBtn">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="18" height="18">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                        </svg>
+                        <span>Yeni Randevu</span>
+                    </button>
+                </div>
+            </header>
+
+            <!-- Page Body Content -->
+            <div class="page-content">
+                <!-- ==========================================
+                     TAB 1: GENEL BAKIŞ (OVERVIEW)
+                     ========================================== -->
+                <div class="tab-pane active" id="tabOverview">
+                    <div class="page-title-row">
+                        <div>
+                            <h2>Klinik Kontrol Merkezi</h2>
+                            <p>Bugünün klinik durumu, hasta akışı ve gerçek zamanlı poliklinik istatistikleri.</p>
+                        </div>
+                        <div class="quick-action-bar">
+                            <button class="action-pill" data-open-modal="appointmentModal">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                + Randevu Oluştur
+                            </button>
+                            <button class="action-pill" data-open-modal="patientModal">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                                + Yeni Hasta Kaydı
+                            </button>
+                            <button class="action-pill" onclick="triggerRealtimeDemo()" style="border-color: rgba(16, 185, 129, 0.4); color: #10b981;">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                ⚡ SignalR Test Simülatörü
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 4 KPI Cards -->
+                    <div class="kpi-grid">
+                        <div class="kpi-card" style="--card-accent: var(--primary-gradient); --card-accent-bg: rgba(14, 165, 233, 0.15); --card-accent-color: #0ea5e9;">
+                            <div class="kpi-header">
+                                <span class="kpi-title">Toplam Kayıtlı Hasta</span>
+                                <div class="kpi-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                                </div>
+                            </div>
+                            <div class="kpi-value-row">
+                                <span class="kpi-value" id="kpiTotalPatients">0</span>
+                                <span class="kpi-badge positive">↑ Aktif</span>
+                            </div>
+                            <div class="kpi-footer">Doğrulanmış hasta profilleri</div>
+                        </div>
+
+                        <div class="kpi-card" style="--card-accent: var(--emerald-gradient); --card-accent-bg: rgba(16, 185, 129, 0.15); --card-accent-color: #10b981;">
+                            <div class="kpi-header">
+                                <span class="kpi-title">Planlı Randevular</span>
+                                <div class="kpi-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                                </div>
+                            </div>
+                            <div class="kpi-value-row">
+                                <span class="kpi-value" id="kpiTodayAppointments">0</span>
+                                <span class="kpi-badge positive">Canlı Takip</span>
+                            </div>
+                            <div class="kpi-footer">30 dk çakışma kontrollü</div>
+                        </div>
+
+                        <div class="kpi-card" style="--card-accent: var(--purple-gradient); --card-accent-bg: rgba(139, 92, 246, 0.15); --card-accent-color: #8b5cf6;">
+                            <div class="kpi-header">
+                                <span class="kpi-title">Görevdeki Doktorlar</span>
+                                <div class="kpi-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                                </div>
+                            </div>
+                            <div class="kpi-value-row">
+                                <span class="kpi-value" id="kpiActiveDoctors">0</span>
+                                <span class="kpi-badge neutral">Branş Uzmanı</span>
+                            </div>
+                            <div class="kpi-footer">Kardiyoloji, Dahiliye, vb.</div>
+                        </div>
+
+                        <div class="kpi-card" style="--card-accent: var(--amber-gradient); --card-accent-bg: rgba(245, 158, 11, 0.15); --card-accent-color: #f59e0b;">
+                            <div class="kpi-header">
+                                <span class="kpi-title">Aktif Poliklinikler</span>
+                                <div class="kpi-icon">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                                </div>
+                            </div>
+                            <div class="kpi-value-row">
+                                <span class="kpi-value" id="kpiActiveClinics">0</span>
+                                <span class="kpi-badge positive">Tam Kapasite</span>
+                            </div>
+                            <div class="kpi-footer">A, B ve C Blok Klinik Odaları</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Row -->
+                    <div class="dashboard-split-grid" style="margin-bottom: 24px;">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"/></svg>
+                                    <span>Haftalık Randevu & Hasta Yoğunluğu</span>
+                                </div>
+                            </div>
+                            <div style="height: 240px; position: relative;">
+                                <canvas id="appointmentsTrendChart"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 3.055A9.001 9.001 0 1020.945 13H11V3.055z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.488 9H15V3.512A9.025 9.025 0 0120.488 9z"/></svg>
+                                    <span>Poliklinik Dağılımı</span>
+                                </div>
+                            </div>
+                            <div style="height: 240px; position: relative;">
+                                <canvas id="clinicDistChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Split Grid: Today's Appointments & Live SignalR Event Feed -->
+                    <div class="dashboard-split-grid">
+                        <!-- Left Column: Appointments with quick status toggle -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                                    <span>Yaklaşan Randevular</span>
+                                </div>
+                                <button class="btn-secondary" style="font-size: 0.8rem; padding: 4px 10px;" onclick="reloadAppointments()">
+                                    Yenile ↻
+                                </button>
+                            </div>
+                            <div class="appointment-list" id="todayAppointmentsList">
+                                <div style="text-align: center; padding: 20px; color: var(--text-muted);">Yükleniyor...</div>
+                            </div>
+                        </div>
+
+                        <!-- Right Column: Real-Time SignalR Event Stream -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div class="panel-title">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                    <span>SignalR Canlı Akış</span>
+                                </div>
+                                <span class="badge" style="background: rgba(16, 185, 129, 0.2); color: #10b981;">WebSocket</span>
+                            </div>
+                            <div class="live-stream-box" id="liveStreamEvents">
+                                <div class="stream-event-item">
+                                    <div class="stream-icon">
+                                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" width="16" height="16"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+                                    </div>
+                                    <div class="stream-content">
+                                        <div class="stream-header">
+                                            <span class="stream-title">Sistem Başlatıldı</span>
+                                            <span class="stream-time">Şimdi</span>
+                                        </div>
+                                        <div class="stream-desc">SignalR MedicalHub dinleyici hazır durumda.</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                     TAB 2: RANDEVU TAKVİMİ (APPOINTMENTS)
+                     ========================================== -->
+                <div class="tab-pane" id="tabAppointments">
+                    <div class="page-title-row">
+                        <div>
+                            <h2>Randevu Yönetimi & Çizelge</h2>
+                            <p>Tüm hekim ve poliklinik randevuları, çakışma kontrolleri ve durum güncellemeleri.</p>
+                        </div>
+                        <button class="btn-primary" data-open-modal="appointmentModal">
+                            + Yeni Randevu Planla
+                        </button>
+                    </div>
+
+                    <div class="panel-card">
+                        <div class="table-responsive">
+                            <table class="med-table">
+                                <thead>
+                                    <tr>
+                                        <th>Randevu No</th>
+                                        <th>Hasta & Şikayet</th>
+                                        <th>Doktor</th>
+                                        <th>Poliklinik</th>
+                                        <th>Tarih & Saat</th>
+                                        <th>Durum</th>
+                                        <th>İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="allAppointmentsTableBody">
+                                    <tr><td colspan="7" style="text-align: center; padding: 24px; color: var(--text-muted);">Yükleniyor...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                     TAB 3: HASTA YÖNETİMİ (PATIENTS)
+                     ========================================== -->
+                <div class="tab-pane" id="tabPatients">
+                    <div class="page-title-row">
+                        <div>
+                            <h2>Hasta Veritabanı & Kayıtlar</h2>
+                            <p>Kayıtlı hastaların kimlik, iletişim, sigorta ve acil durum irtibat bilgileri.</p>
+                        </div>
+                        <button class="btn-primary" data-open-modal="patientModal">
+                            + Yeni Hasta Kaydet
+                        </button>
+                    </div>
+
+                    <div class="panel-card">
+                        <div class="table-responsive">
+                            <table class="med-table">
+                                <thead>
+                                    <tr>
+                                        <th>Hasta Adı</th>
+                                        <th>TC Kimlik No</th>
+                                        <th>Cinsiyet</th>
+                                        <th>Doğum Tarihi</th>
+                                        <th>Telefon</th>
+                                        <th>Acil İletişim</th>
+                                        <th>Hızlı İşlem</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="patientsTableBody">
+                                    <tr><td colspan="7" style="text-align: center; padding: 24px; color: var(--text-muted);">Yükleniyor...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                     TAB 4: DOKTORLAR & POLİKLİNİKLER
+                     ========================================== -->
+                <div class="tab-pane" id="tabDoctors">
+                    <div class="page-title-row">
+                        <div>
+                            <h2>Uzman Hekim Kadrosu</h2>
+                            <p>Poliklinik branşları, hekim biyografileri ve oda yerleşimleri.</p>
+                        </div>
+                    </div>
+
+                    <div class="doctor-cards-grid" id="doctorsGrid" style="margin-bottom: 30px;">
+                        <!-- Injected via app.js -->
+                    </div>
+
+                    <div class="page-title-row">
+                        <div>
+                            <h3>Hizmet Veren Poliklinikler</h3>
+                        </div>
+                    </div>
+                    <div id="clinicsGrid">
+                        <!-- Injected via app.js -->
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                     TAB 5: SIGNALR CANLI AKIŞ DETAYLARI
+                     ========================================== -->
+                <div class="tab-pane" id="tabStream">
+                    <div class="page-title-row">
+                        <div>
+                            <h2>SignalR WebSocket Gözlemcisi</h2>
+                            <p>Tüm istemciler arasında senkronize edilen WebSocket event verileri ve yükleri.</p>
+                        </div>
+                        <button class="btn-primary" onclick="triggerRealtimeDemo()">
+                            ⚡ Örnek Bildirim Gönder
+                        </button>
+                    </div>
+
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div class="panel-title">
+                                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                                <span>Canlı Hub Bağlantı Bilgisi: <code>/hubs/medical</code></span>
+                            </div>
+                        </div>
+                        <p style="color: var(--text-secondary); margin-bottom: 20px; font-size: 0.9rem;">
+                            MedTrack API arkasında çalışan SignalR <code>MedicalHub</code>, randevularda veya reçetelerde bir değişiklik olduğunda tarayıcıyı yenilemeye gerek kalmadan anlık olarak bildirimleri iletir.
+                        </p>
+                        <div class="live-stream-box" id="fullStreamLogs" style="max-height: 500px;">
+                            <!-- Injected via app.js -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- ==========================================================================
+         MODALS
+         ========================================================================== -->
+
+    <!-- Modal: Yeni Randevu -->
+    <div class="modal-backdrop" id="appointmentModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Yeni Randevu Planla</h3>
+                <button class="close-modal-btn">&times;</button>
+            </div>
+            <form id="newAppointmentForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="appPatientSelect">Hasta Seçimi</label>
+                        <select class="form-control" id="appPatientSelect" required>
+                            <option value="">Yükleniyor...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appDoctorSelect">Doktor & Branş</label>
+                        <select class="form-control" id="appDoctorSelect" required>
+                            <option value="">Yükleniyor...</option>
+                        </select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="appDateInput">Randevu Tarihi</label>
+                            <input type="date" class="form-control" id="appDateInput" required value="2026-10-15">
+                        </div>
+                        <div class="form-group">
+                            <label for="appTimeInput">Randevu Saati (30 dk slot)</label>
+                            <select class="form-control" id="appTimeInput" required>
+                                <option value="09:00">09:00</option>
+                                <option value="09:30">09:30</option>
+                                <option value="10:00">10:00</option>
+                                <option value="10:30">10:30</option>
+                                <option value="11:00" selected>11:00</option>
+                                <option value="11:30">11:30</option>
+                                <option value="13:30">13:30</option>
+                                <option value="14:00">14:00</option>
+                                <option value="14:30">14:30</option>
+                                <option value="15:00">15:00</option>
+                                <option value="15:30">15:30</option>
+                                <option value="16:00">16:00</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="appNotesInput">Şikayet / Klinik Not</label>
+                        <textarea class="form-control" id="appNotesInput" rows="3" placeholder="Örn: Rutin kontrol, tansiyon takibi..."></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-close-modal>Vazgeç</button>
+                    <button type="submit" class="btn-primary">Randevuyu Onayla ve Yayınla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Yeni Hasta -->
+    <div class="modal-backdrop" id="patientModal">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3>Yeni Hasta Kaydı</h3>
+                <button class="close-modal-btn">&times;</button>
+            </div>
+            <form id="newPatientForm">
+                <div class="modal-body">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="patientFirstName">Ad</label>
+                            <input type="text" class="form-control" id="patientFirstName" required placeholder="Örn: Can">
+                        </div>
+                        <div class="form-group">
+                            <label for="patientLastName">Soyad</label>
+                            <input type="text" class="form-control" id="patientLastName" required placeholder="Örn: Eren">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="patientNationalId">TC Kimlik No (11 Hane)</label>
+                            <input type="text" class="form-control" id="patientNationalId" required maxlength="11" placeholder="11 haneli TC">
+                        </div>
+                        <div class="form-group">
+                            <label for="patientGender">Cinsiyet</label>
+                            <select class="form-control" id="patientGender" required>
+                                <option value="M">Erkek</option>
+                                <option value="F">Kadın</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="patientBirthDate">Doğum Tarihi</label>
+                            <input type="date" class="form-control" id="patientBirthDate" required value="1995-06-15">
+                        </div>
+                        <div class="form-group">
+                            <label for="patientInsuranceSelect">Sigorta Türü</label>
+                            <select class="form-control" id="patientInsuranceSelect">
+                                <!-- Injected via app.js -->
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="patientPhone">Telefon</label>
+                            <input type="tel" class="form-control" id="patientPhone" placeholder="05XX XXX XX XX">
+                        </div>
+                        <div class="form-group">
+                            <label for="patientEmail">E-Posta</label>
+                            <input type="email" class="form-control" id="patientEmail" placeholder="ornek@posta.com">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="patientEmergencyName">Acil İletişim Kişisi</label>
+                            <input type="text" class="form-control" id="patientEmergencyName" placeholder="Ad Soyad (Yakınlık)">
+                        </div>
+                        <div class="form-group">
+                            <label for="patientEmergencyPhone">Acil İletişim Telefonu</label>
+                            <input type="tel" class="form-control" id="patientEmergencyPhone" placeholder="05XX XXX XX XX">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-secondary" data-close-modal>Vazgeç</button>
+                    <button type="submit" class="btn-primary">Hasta Kaydını Tamamla</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="./js/app.js"></script>
+</body>
+</html>

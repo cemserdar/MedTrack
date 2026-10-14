@@ -66,7 +66,6 @@ namespace MedTrack.WebAPI.Controllers
             }
         }
 
-        [HttpPut("{id}")]
         [HttpPut("{id:guid}")]
         public async Task<ActionResult<ClinicDto>> Update(Guid id, [FromBody] ClinicUpdateDto dto)
         {
